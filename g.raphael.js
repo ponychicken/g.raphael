@@ -44,6 +44,38 @@
     Raphael.fn.g.text = function (x, y, text) {
         return this.text(x, y, text).attr(this.g.txtattr);
     };
+    Raphael.fn.g.textBox = function (text) {
+        var t = this.text(0, 0, text).attr(this.g.txtattr);
+        var bb = t.getBBox();
+        t.remove();
+        return bb;
+    };
+    Raphael.fn.g.textAlign = function (x, y, width, height, text, align, valign) {
+        var dim = this.g.textBox(text);
+	align = align || 'left';
+	valign = valign || 'top';
+	height = height || dim.height
+	switch(align)
+	  {
+	  case 'center':
+	    x += (width - dim.width) / 2;
+	    break;
+	  case 'right':
+	    x += width - dim.width;
+	    break;
+	  }
+
+	switch(valign)
+	  {
+	    case 'middle':
+	      y += (height - dim.height) / 2;
+	      break;
+	    case 'bottom':
+	      y += height - dim.height;
+	      break;
+	  }
+	return this.text(x + dim.width / 2, y + dim.height / 2, text);
+    };
     Raphael.fn.g.labelise = function (label, val, total) {
         if (label) {
             return (label + "").replace(/(##+(?:\.#+)?)|(%%+(?:\.%+)?)/g, function (all, value, percent) {

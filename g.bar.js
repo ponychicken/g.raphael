@@ -159,6 +159,56 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
         }
         return this;
     };
+    chart.xlabels = function (labels, isBottom, labelValues) {
+        if (!labelValues)
+	  labelValues = multi ? values[0] : values;
+        this.labels = paper.set();
+        var L, l = -Infinity;
+	var barWidth = Math.ceil((multi ? bars[0][0] : bars[0]).w) * multi;
+
+        for (var i = 0; i < len; i++) {
+	  var bar = multi ? bars[0][i] : bars[i];
+	  var label = paper.g.labelise(labels[i], labelValues[i], total);
+	  var cover = covers[i];
+	  var labelX = (bar.x - bar.w/2) + barWidth / 2;
+	  var barY = bar.y;
+	  if (!isBottom) {
+	    for (var j=1; j<multi; j++) {
+	      barY = Math.min(barY, bars[j][i].y);
+	    }
+	  }
+	  var labelY = isBottom ? y + height - barvgutter / 2 : barY - 10;
+	  var L = paper.g.text(labelX, labelY, label).insertBefore(covers[i]);
+	  var bb = L.getBBox();
+	  if (bb.x - 7 < l) {
+	    L.remove();
+	  } else {
+	    this.labels.push(L);
+	    l = bb.x + bb.width;
+	  }
+	}
+        return this;
+    };
+    chart.ylabels = function (steps) {
+        steps = (steps || 10) + 1;
+
+	var step = Math.ceil(total / steps);
+	var stepHeight = Math.round((height-barvgutter) / steps);
+	var bar = multi ? bars[0][0] : bars[0];
+	var barWidth = Math.ceil((multi ? bars[0][0] : bars[0]).w) * multi;
+	var sideWidth = x;
+	var labelY = height + y - barvgutter;
+	var textDim = paper.g.textBox(total.toString());
+
+	for (var i=0; i<steps; i++ ) {
+	    var label = Math.ceil((i == steps) ? total : (step * i)).toString();
+	    L = paper.g.textAlign(sideWidth-textDim.width, labelY-textDim.height/2, textDim.width, 0, label, 'left').insertBefore(covers[i]);
+	    paper.path('M ' + (x + barhgutter) + ' ' + labelY + 'L' + (width + barWidth) + ' ' + labelY).toBack();
+	    this.labels.push(L);
+	    labelY -= stepHeight;
+	}
+        return this;
+    };
     chart.hover = function (fin, fout) {
         covers2.hide();
         covers.show();
