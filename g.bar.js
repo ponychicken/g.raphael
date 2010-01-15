@@ -202,8 +202,8 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
 
 	for (var i=0; i<steps; i++ ) {
 	    var label = Math.ceil((i == steps) ? total : (step * i)).toString();
-	    L = paper.g.textAlign(sideWidth-textDim.width, labelY-textDim.height/2, textDim.width, 0, label, 'left').insertBefore(covers[i]);
-	    paper.path('M ' + (x + barhgutter) + ' ' + labelY + 'L' + (width + barWidth) + ' ' + labelY).toBack();
+	    L = paper.g.textAlign(sideWidth-textDim.width-5, labelY-textDim.height/2, textDim.width, 0, label, 'left').insertBefore(covers[i]);
+	    paper.path('M ' + x + ' ' + labelY + 'L' + (width + barWidth) + ' ' + labelY).toBack();
 	    this.labels.push(L);
 	    labelY -= stepHeight;
 	}
