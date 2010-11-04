@@ -144,16 +144,25 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
             }
         } else {
             for (var i = 0; i < len; i++) {
-                for (var j = 0; j < (multi || 1); j++) {
-                    var label = paper.g.labelise(multi ? labels[j] && labels[j][i] : labels[i], multi ? values[j][i] : values[i], total);
-                    L = paper.g.text(bars[i * (multi || 1) + j].x, isBottom ? y + height - barvgutter / 2 : bars[i * (multi || 1) + j].y - 10, label).insertBefore(covers[i * (multi || 1) + j]);
-                    var bb = L.getBBox();
-                    if (bb.x - 7 < l) {
-                        L.remove();
-                    } else {
-                        this.labels.push(L);
-                        l = bb.x + bb.width;
-                    }
+                // for (var j = 0; j < (multi || 1); j++) {
+                //     var label = paper.g.labelise(multi ? labels[j] && labels[j][i] : labels[i], multi ? values[j][i] : values[i], total);
+                //     L = paper.g.text(bars[i * (multi || 1) + j].x, isBottom ? y + height - barvgutter / 2 : bars[i * (multi || 1) + j].y - 10, label).insertBefore(covers[i * (multi || 1) + j]);
+                //     var bb = L.getBBox();
+                //     if (bb.x - 7 < l) {
+                //         L.remove();
+                //     } else {
+                //         this.labels.push(L);
+                //         l = bb.x + bb.width;
+                //     }
+                // }
+                var label = paper.g.labelise(labels[i], total);
+                L = paper.g.text(bars[0][i].x, isBottom ? y + height - barvgutter / 2 : bars[0][i].y - 10, label).insertBefore(covers[i * (multi || 1)]);
+                var bb = L.getBBox();
+                if (bb.x - 7 < l) {
+                    L.remove();
+                } else {
+                    this.labels.push(L);
+                    l = bb.x + bb.width;
                 }
             }
         }
