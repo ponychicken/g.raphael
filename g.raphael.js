@@ -225,13 +225,15 @@
         set.translate(xy.x - w - bb.x, xy.y - h - bb.y);
         return this.path(p).attr({fill: "#000", stroke: "none"}).insertBefore(set.node ? set : set[0]);
     };
-    Raphael.fn.g.popup = function (x, y, text, dir, size) {
+    Raphael.fn.g.popup = function (x, y, text, dir, size, options) {
         dir = dir == null ? 2 : dir > 3 ? 3 : dir;
+        options = options || {}
         size = size || 5;
         text = text || "$9.99";
+        var color = options.fill || '#000';
         var res = this.set(),
             d = 3;
-        res.push(this.path().attr({fill: "#000", stroke: "#000"}));
+        res.push(this.path().attr({fill:color, stroke:color}));
         res.push(this.text(x, y, text).attr(this.g.txtattr).attr({fill: "#fff", "font-family": "Helvetica, Arial"}));
         res.update = function (X, Y, withAnimation) {
             X = X || x;
@@ -257,12 +259,14 @@
         };
         return res.update(x, y);
     };
-    Raphael.fn.g.flag = function (x, y, text, angle) {
+    Raphael.fn.g.flag = function (x, y, text, angle, options) {
+        options = options || {};
         angle = angle || 0;
         text = text || "$9.99";
+        var color = options.fill || '#000';
         var res = this.set(),
             d = 3;
-        res.push(this.path().attr({fill: "#000", stroke: "#000"}));
+        res.push(this.path().attr({fill:color, stroke:color}));
         res.push(this.text(x, y, text).attr(this.g.txtattr).attr({fill: "#fff", "font-family": "Helvetica, Arial"}));
         res.update = function (x, y) {
             this.rotate(0, x, y);
