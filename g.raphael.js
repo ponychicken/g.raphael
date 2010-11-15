@@ -259,6 +259,52 @@
         };
         return res.update(x, y);
     };
+    Raphael.fn.g.popup2 = function (x, y, text, dir, size, options) {
+        dir = dir == null ? 2 : dir > 3 ? 3 : dir;
+        options = options || {}
+        size = size || 5;
+        text = text || "$9.99";
+        var color = options.fill || '#000';
+        var res = this.set(),
+            d = 3,
+            width = this.width,
+            height = this.height;
+        res.push(this.path().attr({fill:color, stroke:color}));
+        res.push(this.text(x, y, text).attr(this.g.txtattr).attr({fill: "#fff", "font-family": "Helvetica, Arial"}));
+        res.update = function (X, Y, withAnimation) {
+            X = X || x;
+            Y = Y || y;
+            var bb = this[1].getBBox(),
+                w = bb.width / 2,
+                h = bb.height / 2;
+            var lw = w,
+                rw = w,
+                gutter = 10;
+            if((X-w-gutter) < 0 && (X+(2*w)+gutter) < width) {
+              lw = 0;
+              rw = w * 2;
+              this[1].attr({'text-anchor': 'start'});
+            }
+            if((X+w+gutter) > width && (X-(2*w)-gutter) > 0) {
+              lw = w * 2;
+              rw = 0;
+              this[1].attr({'text-anchor': 'end'});
+            }
+            var p = ["M", X, Y, "l", -size, -size, -mmax(lw - size, 0), 0, "a", size, size, 0, 0, 1, -size, -size,
+                    "l", 0, -mmax(h - size, 0), 0, -size, 0, -size, 0, -mmax(h - size, 0), "a", size, size, 0, 0, 1, size, -size,
+                    "l", mmax(lw - size, 0), 0, size, 0, size, 0, mmax(rw - size, 0), 0, "a", size, size, 0, 0, 1, size, size,
+                    "l", 0, mmax(h - size, 0), 0, size, 0, size, 0, mmax(h - size, 0), "a", size, size, 0, 0, 1, -size, size,
+                    "l", -mmax(rw - size, 0), 0, "z"].join(",");
+            var attr = {x: X, y: Y - size * 2 - h, path: p};
+            if (withAnimation) {
+                this.animate(attr, 500, ">");
+            } else {
+                this.attr(attr);
+            }
+            return this;
+        };
+        return res.update(x, y);
+    };    
     Raphael.fn.g.flag = function (x, y, text, angle, options) {
         options = options || {};
         angle = angle || 0;
