@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Test improved popup for gRaphaël</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="author" content="Bob Lail">
+        <meta name="description" content="Charting JavaScript Library">
+        <script src="../raphael-min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="g.raphael.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8">
+            window.onload = function () {
+              var r = Raphael("holder");
+              var text = '\'\'\'\'\' \'\' \'\' \'\'\'\n\'\' \' \'\'\'\' \'\'';
+              var text = 'longer hello';
+              var anchors = ['start', 'middle', 'end'];
+              var directions = [0, 2, 1, 3];
+              var ys = [0, 110, 155, 220]
+              var xOffsets = [140, 140, 198, 116];
+              var xMultiplier = [140, 140, 123, 123];
+              for(var dir=0; dir<4; dir++) {
+                for(var i=0, ii=anchors.length; i<ii; i++) {
+                  var x = xOffsets[dir] + i * xMultiplier[dir];
+                  var y = 30 + ys[dir];
+                  var popup = r.g.speechBubble(x, y, text, directions[dir], undefined, {'quote-anchor': anchors[i]});
+                  popup[0].attr({fill: '#000'});
+                  popup[1].attr({fill: '#fff'}).toFront();
+                }
+              }
+            };
+        </script>
+    </head>
+    <body class="raphael" id="g.raphael.dmitry.baranovskiy.com">
+        <div id="holder"></div>
+        <p>
+            Demo of <a href="http://g.raphaeljs.com/">gRaphaël</a> JavaScript library.
+        </p>
+    </body>
+</html>

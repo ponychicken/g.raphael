@@ -259,52 +259,86 @@
         };
         return res.update(x, y);
     };
-    Raphael.fn.g.popup2 = function (x, y, text, dir, size, options) {
+    Raphael.fn.g.speechBubble = function (x, y, set_or_text, dir, size, options) {
         dir = dir == null ? 2 : dir > 3 ? 3 : dir;
         options = options || {}
         size = size || 5;
-        text = text || "$9.99";
+        var text = ((typeof set_or_text) == 'string') ? this.text(x, y, set_or_text).attr(this.g.txtattr).attr({fill: "#fff", "font-family": "Helvetica, Arial"}) : set_or_text;
         var color = options.fill || '#000';
         var res = this.set(),
             d = 3,
+            gutter = 10,
             width = this.width,
             height = this.height;
         res.push(this.path().attr({fill:color, stroke:color}));
-        res.push(this.text(x, y, text).attr(this.g.txtattr).attr({fill: "#fff", "font-family": "Helvetica, Arial"}));
+        res.push(text);
         res.update = function (X, Y, withAnimation) {
             X = X || x;
             Y = Y || y;
             var bb = this[1].getBBox(),
                 w = bb.width / 2,
-                h = bb.height / 2;
-            var lw = w,
+                h = bb.height / 2,
+                lw = w,
                 rw = w,
-                gutter = 10;
-            if((X-w-gutter) < 0 && (X+(2*w)+gutter) < width) {
-              lw = 0;
-              rw = w * 2;
-              this[1].attr({'text-anchor': 'start'});
-            }
-            if((X+w+gutter) > width && (X-(2*w)-gutter) > 0) {
-              lw = w * 2;
-              rw = 0;
-              this[1].attr({'text-anchor': 'end'});
-            }
-            var p = ["M", X, Y, "l", -size, -size, -mmax(lw - size, 0), 0, "a", size, size, 0, 0, 1, -size, -size,
-                    "l", 0, -mmax(h - size, 0), 0, -size, 0, -size, 0, -mmax(h - size, 0), "a", size, size, 0, 0, 1, size, -size,
-                    "l", mmax(lw - size, 0), 0, size, 0, size, 0, mmax(rw - size, 0), 0, "a", size, size, 0, 0, 1, size, size,
-                    "l", 0, mmax(h - size, 0), 0, size, 0, size, 0, mmax(h - size, 0), "a", size, size, 0, 0, 1, -size, size,
-                    "l", -mmax(rw - size, 0), 0, "z"].join(",");
-            var attr = {x: X, y: Y - size * 2 - h, path: p};
-            if (withAnimation) {
-                this.animate(attr, 500, ">");
+                th = h,
+                bh = h,
+                dx = [0, w + size * 2, 0, -w - size * 2],
+                dy = [-h * 2 - size * 3, -h - size, 0, -h - size],
+                a = options['quote-anchor'];
+            if((dir == 2) || (dir == 0)) {
+              if(a == undefined || a == 'auto') {
+                if((X-w-gutter) < 0 && (X+(2*w)+gutter) < width) {
+                  a = 'start';
+                } else if((X+w+gutter) > width && (X-(2*w)-gutter) > 0) {
+                  a = 'end';
+                }                
+              }
+              if(a == 'start') {
+                lw = size;
+                rw = w * 2 - size;
+                dx[dir] = dx[dir] - size;
+                this[1].attr({'text-anchor': 'start'});
+              } else if(a == 'end') {
+                lw = w * 2 - size;
+                rw = size;
+                dx[dir] = dx[dir] + size;
+                this[1].attr({'text-anchor': 'end'});
+              }
             } else {
-                this.attr(attr);
+              if(dir == 1) {
+                dx[dir] = dx[dir] + w;
+                X = X + w;
+                this[1].attr({'text-anchor': 'end'});
+              } else if(dir == 3) {  
+                dx[dir] = dx[dir] - w;
+                X = X - w;
+                this[1].attr({'text-anchor': 'start'});
+              }
+              if(options['quote-anchor'] == 'start') {
+                th = size;
+                bh = h * 2 - size;
+              }
+              if(options['quote-anchor'] == 'end') {
+                th = h * 2 - size;
+                bh = size;
+              }
+            }
+            var p = ["M", X - dx[dir], Y - dy[dir], "l", -size, (dir == 2) * -size, -mmax(lw - size, 0), 0, "a", size, size, 0, 0, 1, -size, -size,
+                    "l", 0, -mmax(bh - size, 0), (dir == 3) * -size, -size, (dir == 3) * size, -size, 0, -mmax(th - size, 0), "a", size, size, 0, 0, 1, size, -size,
+                    "l", mmax(lw - size, 0), 0, size, !dir * -size, size, !dir * size, mmax(rw - size, 0), 0, "a", size, size, 0, 0, 1, size, size,
+                    "l", 0, mmax(th - size, 0), (dir == 1) * size, size, (dir == 1) * -size, size, 0, mmax(bh - size, 0), "a", size, size, 0, 0, 1, -size, size,
+                    "l", -mmax(rw - size, 0), 0, "z"].join(","),
+                xy = [{x: X, y: Y + size * 2 + h}, {x: X - size * 2 - w, y: Y}, {x: X, y: Y - size * 2 - h}, {x: X + size * 2 + w, y: Y}][dir];
+            xy.path = p;
+            if (withAnimation) {
+                this.animate(xy, 500, ">");
+            } else {
+                this.attr(xy);
             }
             return this;
         };
         return res.update(x, y);
-    };    
+    }; 
     Raphael.fn.g.flag = function (x, y, text, angle, options) {
         options = options || {};
         angle = angle || 0;
